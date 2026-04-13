@@ -254,10 +254,11 @@
             }
         }
 
-        .edit-actions { display: none !important; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; }
-        .edit-mode-active .edit-actions { display: flex !important; }
+        
+        
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+
 
         .contact-item { padding: 5px 0; border-bottom: none; margin-bottom: 12px; }
         .emergency-item { border: 2.5px solid #ff3b30 !important; border-radius: 16px !important; padding: 0 15px !important; background: var(--bg-color) !important; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.15) !important; }
@@ -483,6 +484,13 @@
         .form-input { width: 100%; height: 45px; border-radius: 10px; border: 1.5px solid var(--border-color); padding: 0 12px; background: var(--bg-color); color: var(--text-color); font-size: 1rem; }
         .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; margin-top: 10px; }
         .checkbox-group input { width: 20px; height: 20px; }
+    
+        .edit-actions { display: none !important; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; }
+        .edit-mode-active .edit-actions { display: flex !important; }
+
+    
+        .fa-star { color: #ff3b30 !important; }
+
     </style>
 </head>
 <body>
@@ -628,6 +636,7 @@
                     <button class="settings-btn" onclick="document.getElementById('import-input').click()" style="background: var(--bg-color); border-style: dashed;">
                         <i class="fas fa-file-import"></i> Importar Copia
                     </button>
+                <button class="settings-btn" onclick="resetApplicationData()" style="color: #ff3b30; border-color: #ff3b30; margin-top: 10px;"><i class="fas fa-trash-alt"></i> RESET TOTAL DE DATOS</button>
                 </div>
                 <input type="file" id="import-input" style="display:none" onchange="importData(event)" accept=".json">
             </div>
@@ -635,7 +644,7 @@
             <div class="settings-section">
                 <span class="settings-title">Información</span>
                 <div style="background: var(--accent-color); padding: 10px; border-radius: 12px; font-size: 0.8rem; text-align: left; line-height: 1.4; border: 1.5px solid var(--border-color);">
-                    <b>Versión:</b> 1.79.0 (v79)<br>
+                    <b>Versión:</b> 1.84.0 (v84)<br>
                     <b>Fecha:</b> 26 de Marzo, 2026<br>
                     <b>Desarrollado por:</b> Xavibc
                 </div>
@@ -918,7 +927,7 @@
         });
 
         // 3. Forzar unificación y cambios específicos (Kosmos, Orden, Subtítulos)
-        const versionKey = 'noria-version-2026-03-26_v79';
+        const versionKey = 'noria-version-2026-03-26_v83';
         if (localStorage.getItem(versionKey) !== 'true') {
             userCategories = defaultCategories;
             userContacts = defaultContacts;
@@ -932,64 +941,86 @@
     }
 
 
+    
     function renderSidebarAndTabs() {
         const sidebarLinks = document.getElementById('sidebar-links');
         const mainContent = document.getElementById('main-content');
         if (!sidebarLinks || !mainContent) return;
 
         sidebarLinks.innerHTML = '';
-        // Eliminar tab-contents dinámicos previos (los que no son estáticos)
-        const contents = mainContent.querySelectorAll('.tab-content:not(#viviendas):not(#porterillo)');
-        contents.forEach(c => c.remove());
+        // Guardar tabs estáticos
+        const staticTabs = {
+            viviendas: document.getElementById('viviendas'),
+            porterillo: document.getElementById('porterillo')
+        };
 
+        // Eliminar tab-contents dinámicos previos
+        document.querySelectorAll('.tab-content:not(#viviendas):not(#porterillo)').forEach(c => c.remove());
+
+        
         userCategories.forEach((cat, index) => {
-            // Sidebar link
+            if (!cat.id) return;
+
+            // 1. Sidebar link
             const link = document.createElement('div');
             link.className = 'sidebar-item' + (index === 0 ? ' active' : '');
+            link.id = `link-${cat.id}`;
             link.innerHTML = `<i class="${cat.icon}"></i> ${cat.label}`;
             link.onclick = () => openTab(cat.id);
-            link.id = `link-${cat.id}`;
             sidebarLinks.appendChild(link);
 
-            // Tab content (only for non-static)
+            // 2. Tab content
             if (!cat.static) {
-                const content = document.createElement('div');
-                content.id = cat.id;
-                content.className = 'tab-content' + (index === 0 ? ' active' : '');
-                content.innerHTML = `<div id="list-${cat.id}"></div>`;
-                mainContent.appendChild(content);
-                renderContacts(cat.id);
+                const tabDiv = document.createElement('div');
+                tabDiv.id = cat.id;
+                tabDiv.className = 'tab-content' + (index === 0 ? ' active' : '');
+                // Añadimos un contenedor interno único para los contactos
+                tabDiv.innerHTML = `<div id="list-container-${cat.id}"></div>`;
+                mainContent.appendChild(tabDiv);
+                renderCategoryContacts(cat.id);
+            } else if (staticTabs[cat.id]) {
+                staticTabs[cat.id].classList.toggle('active', index === 0);
             }
         });
 
-        if (userCategories.length > 0) {
-            const firstTab = userCategories[0].id;
-            openTab(firstTab);
-        }
+        if (userCategories.length > 0) { openTab(userCategories[0].id); }
     }
 
-    function renderContacts(categoryId) {
-        const area = document.getElementById(categoryId);
-        if (!area) return;
-        area.innerHTML = '';
-        
-        // Contenedor para grid en escritorio
+
+    
+    
+    function renderCategoryContacts(categoryId) {
+        const container = document.getElementById(`list-container-${categoryId}`);
+        if (!container) return;
+        container.innerHTML = '';
+
         const gridContainer = document.createElement('div');
         gridContainer.className = 'stagger-item-container';
-        area.appendChild(gridContainer);
+        container.appendChild(gridContainer);
 
         const contacts = userContacts[categoryId] || [];
         contacts.forEach((c, idx) => {
             const card = document.createElement('div');
             card.className = `contact-item stagger-item ${c.isEmergency ? 'emergency-item' : 'standard-item'}`;
             card.style.animationDelay = `${idx * 0.05}s`;
-            
-            // Si es emergencia, añadir animación de respiración
+
             if (c.isEmergency) {
                 card.style.animation = `slideInUp 0.4s ease ${idx * 0.05}s forwards, emergencyPulse 3s infinite ease-in-out`;
             }
 
             const hasSub = c.sublabel && c.sublabel.trim() !== "";
+            const numbersHtml = (c.numbers || []).map(n => `
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                    <a href="tel:${n.phone}" class="btn-call shimmer">
+                        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;">${n.phone}</span>
+                            ${n.label ? `<span style="font-size: 0.7rem; opacity: 0.7; font-weight: bold; text-transform: uppercase;">${n.label}</span>` : ''}
+                        </div>
+                    </a>
+                    ${n.wa ? `<a href="https://wa.me/34${n.phone}" class="btn-wa shimmer"><i class="fab fa-whatsapp"></i></a>` : '<div class="wa-spacer"></div>'}
+                </div>
+            `).join('');
 
             card.innerHTML = `
                 <div class="contact-header" onclick="toggleContact(this)">
@@ -999,38 +1030,23 @@
                             ${hasSub ? `<span style="font-size: 0.8rem; opacity: 0.7; font-weight: 600; margin-top: 2px;">${c.sublabel}</span>` : ''}
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.4; transition: transform 0.3s;"></i>
-                    </div>
+                    <i class="fas fa-chevron-down" style="font-size: 0.8rem; opacity: 0.4; transition: transform 0.3s;"></i>
                 </div>
-
                 <div class="contact-body">
-                    ${c.numbers.map(n => `
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-                            <a href="tel:${n.phone}" class="btn-call shimmer">
-                                <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                                <div style="display: flex; flex-direction: column;">
-                                    <span style="font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;">${n.phone}</span>
-                                    ${n.label ? `<span style="font-size: 0.7rem; opacity: 0.7; font-weight: bold; text-transform: uppercase;">${n.label}</span>` : ''}
-                                </div>
-                            </a>
-                            ${n.wa ? `<a href="https://wa.me/34${n.phone}" class="btn-wa shimmer"><i class="fab fa-whatsapp"></i></a>` : '<div class="wa-spacer"></div>'}
-                        </div>
-                    `).join('')}
+                    ${numbersHtml}
                     ${c.address ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.address)}" class="btn-address" target="_blank"><i class="fas fa-map-marker-alt"></i> <span>${c.address}</span></a>` : ''}
                     ${c.web ? `<a href="${c.web.startsWith('http') ? c.web : 'https://' + c.web}" class="btn-web" target="_blank"><i class="fas fa-globe"></i> <span>${c.web}</span></a>` : ''}
                     ${c.mail ? `<a href="mailto:${c.mail}" class="btn-email"><i class="fas fa-envelope"></i> <span>${c.mail}</span></a>` : ''}
-                    ${c.isEmergency ? '' : `
-                        <div class="edit-actions">
-                            <button class="sub-btn" onclick="editContact('${categoryId}', ${idx})" style="flex:1; font-size: 0.75rem;"><i class="fas fa-edit"></i> EDITAR</button>
-                            <button class="sub-btn" onclick="deleteContact('${categoryId}', ${idx})" style="flex:1; font-size: 0.75rem; color: #ff3b30;"><i class="fas fa-trash"></i> BORRAR</button>
-                        </div>
-                    `}
+                    <div class="edit-actions">
+                        <button class="sub-btn" onclick="editContact('${categoryId}', ${idx})" style="flex:1; font-size: 0.75rem;"><i class="fas fa-edit"></i> EDITAR</button>
+                        <button class="sub-btn" onclick="deleteContact('${categoryId}', ${idx})" style="flex:1; font-size: 0.75rem; color: #ff3b30;"><i class="fas fa-trash"></i> BORRAR</button>
+                    </div>
                 </div>
             `;
             gridContainer.appendChild(card);
         });
     }
+
 
     function toggleContact(header) {
         const item = header.parentElement;
@@ -1277,6 +1293,7 @@
         userCategories.splice(to, 0, item);
         localStorage.setItem('user-categories', JSON.stringify(userCategories));
         openTabManager();
+        document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
     }
 
@@ -1336,6 +1353,7 @@
         
         closeEditTabModal();
         openTabManager();
+        document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
     }
 
@@ -1349,6 +1367,7 @@
         localStorage.setItem('user-contacts', JSON.stringify(userContacts));
         
         openTabManager();
+        document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
     }
 
@@ -1677,6 +1696,17 @@
 
     // INICIO
     window.onload = function() {
+
+    // FORCE WIPE FOR V84
+    const LAST_STABLE_VERSION = 'noria-v84-wipe';
+    if (localStorage.getItem(LAST_STABLE_VERSION) !== 'true') {
+        localStorage.clear();
+        localStorage.setItem(LAST_STABLE_VERSION, 'true');
+        location.reload();
+    }
+
+        
+        document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
         setTheme(localStorage.getItem('user-theme') || 'light');
     };
@@ -1746,6 +1776,14 @@
             }
         }
     });
+
+    
+    function resetApplicationData() {
+        if (confirm('¿Seguro que quieres borrar TODOS los datos y volver al estado inicial?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
 
     function toggleBackupOptions() {
         const options = document.getElementById('backup-options');
