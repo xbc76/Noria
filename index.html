@@ -491,6 +491,101 @@
     
         .fa-star { color: #ff3b30 !important; }
 
+    
+        /* 3 Wheels Picker */
+        
+        /* .wheel-select { */ 
+            flex: 1; height: 50px; border-radius: 12px; border: 2px solid var(--border-color);
+            background: var(--bg-color); color: var(--text-color); font-size: 1.2rem; font-weight: 900;
+            text-align: center; text-align-last: center; appearance: none; cursor: pointer;
+            box-shadow: var(--shadow-sm); transition: border-color 0.2s;
+        }
+        .wheel-select:focus { border-color: var(--primary-blue); outline: none; }
+
+    
+        /* Vertical Wheel Picker (Drum Style) */
+        .wheel-picker { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: center; 
+            align-items: center;
+            margin: 20px auto;
+            position: relative;
+            height: 150px;
+            width: 100%;
+            max-width: 300px;
+            overflow: hidden;
+            background: var(--accent-color);
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+        }
+
+        /* Highlight bar */
+        .wheel-picker::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 46px;
+            margin-top: -23px;
+            background: var(--primary-blue);
+            opacity: 0.1;
+            border-radius: 10px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .wheel-column {
+            flex: 1;
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE 10+ */
+            position: relative;
+            z-index: 2;
+        }
+        .wheel-column::-webkit-scrollbar { display: none; } /* Safari/Chrome */
+
+        .wheel-scroll {
+            padding: 50px 0; /* Padding to allow centering first and last items */
+        }
+
+        .wheel-item {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-color);
+            scroll-snap-align: center;
+            transition: transform 0.2s, opacity 0.2s;
+            opacity: 0.3;
+        }
+
+        /* Active item scaling (simulated via JS or just center) */
+        .wheel-item.active {
+            opacity: 1;
+            transform: scale(1.2);
+            color: var(--primary-blue);
+        }
+
+        /* Fading mask */
+        .wheel-mask {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, 
+                var(--accent-color) 0%, 
+                transparent 30%, 
+                transparent 70%, 
+                var(--accent-color) 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+
     </style>
 </head>
 <body>
@@ -531,8 +626,34 @@
             <button class="sub-btn" onclick="switchSubTab(this, 'sub-vivienda')">VIVIENDA</button>
             <button class="sub-btn" onclick="switchSubTab(this, 'sub-todo')">TODO</button>
         </div>
-        <div id="sub-garaje" class="search-form active"><label>Nº PLAZA GARAJE</label><input type="number" id="in-garaje" class="search-input" oninput="doSearch('garaje')"></div>
-        <div id="sub-trastero" class="search-form"><label>Nº TRASTERO</label><input type="number" id="in-trastero" class="search-input" oninput="doSearch('trastero')"></div>
+        <div id="sub-garaje" class="search-form active"><label>Nº PLAZA GARAJE</label>
+    <div class="wheel-picker" id="picker-in-garaje">
+        <div class="wheel-mask"></div>
+        <div class="wheel-column" id="in-garaje-h-col" onscroll="onWheelScroll('in-garaje', 'h', 'garaje')">
+            <div class="wheel-scroll"><div class="wheel-item" data-val="0">0</div><div class="wheel-item" data-val="1">1</div><div class="wheel-item" data-val="2">2</div><div class="wheel-item" data-val="3">3</div></div>
+        </div>
+        <div class="wheel-column" id="in-garaje-t-col" onscroll="onWheelScroll('in-garaje', 't', 'garaje')">
+            <div class="wheel-scroll"><div class="wheel-item" data-val="0">0</div><div class="wheel-item" data-val="1">1</div><div class="wheel-item" data-val="2">2</div><div class="wheel-item" data-val="3">3</div><div class="wheel-item" data-val="4">4</div><div class="wheel-item" data-val="5">5</div><div class="wheel-item" data-val="6">6</div><div class="wheel-item" data-val="7">7</div><div class="wheel-item" data-val="8">8</div><div class="wheel-item" data-val="9">9</div></div>
+        </div>
+        <div class="wheel-column" id="in-garaje-u-col" onscroll="onWheelScroll('in-garaje', 'u', 'garaje')">
+            <div class="wheel-scroll"><div class="wheel-item" data-val="0">0</div><div class="wheel-item" data-val="1">1</div><div class="wheel-item" data-val="2">2</div><div class="wheel-item" data-val="3">3</div><div class="wheel-item" data-val="4">4</div><div class="wheel-item" data-val="5">5</div><div class="wheel-item" data-val="6">6</div><div class="wheel-item" data-val="7">7</div><div class="wheel-item" data-val="8">8</div><div class="wheel-item" data-val="9">9</div></div>
+        </div>
+    </div>
+    </div>
+        <div id="sub-trastero" class="search-form"><label>Nº TRASTERO</label>
+    <div class="wheel-picker" id="picker-in-trastero">
+        <div class="wheel-mask"></div>
+        <div class="wheel-column" id="in-trastero-h-col" onscroll="onWheelScroll('in-trastero', 'h', 'trastero')">
+            <div class="wheel-scroll"><div class="wheel-item" data-val="0">0</div><div class="wheel-item" data-val="1">1</div><div class="wheel-item" data-val="2">2</div></div>
+        </div>
+        <div class="wheel-column" id="in-trastero-t-col" onscroll="onWheelScroll('in-trastero', 't', 'trastero')">
+            <div class="wheel-scroll"><div class="wheel-item" data-val="0">0</div><div class="wheel-item" data-val="1">1</div><div class="wheel-item" data-val="2">2</div><div class="wheel-item" data-val="3">3</div><div class="wheel-item" data-val="4">4</div><div class="wheel-item" data-val="5">5</div><div class="wheel-item" data-val="6">6</div><div class="wheel-item" data-val="7">7</div><div class="wheel-item" data-val="8">8</div><div class="wheel-item" data-val="9">9</div></div>
+        </div>
+        <div class="wheel-column" id="in-trastero-u-col" onscroll="onWheelScroll('in-trastero', 'u', 'trastero')">
+            <div class="wheel-scroll"><div class="wheel-item" data-val="0">0</div><div class="wheel-item" data-val="1">1</div><div class="wheel-item" data-val="2">2</div><div class="wheel-item" data-val="3">3</div><div class="wheel-item" data-val="4">4</div><div class="wheel-item" data-val="5">5</div><div class="wheel-item" data-val="6">6</div><div class="wheel-item" data-val="7">7</div><div class="wheel-item" data-val="8">8</div><div class="wheel-item" data-val="9">9</div></div>
+        </div>
+    </div>
+    </div>
         <div id="sub-vivienda" class="search-form">
             <label>PORTAL</label><select id="in-portal" class="search-input" onchange="doSearch('vivienda')"><option value="">Seleccionar...</option><script>for(let i=1;i<=13;i++)document.write(`<option value="${i}">Portal ${i}</option>`)</script></select>
             <div style="display:flex;gap:10px;margin-top:10px">
@@ -644,8 +765,8 @@
             <div class="settings-section">
                 <span class="settings-title">Información</span>
                 <div style="background: var(--accent-color); padding: 10px; border-radius: 12px; font-size: 0.8rem; text-align: left; line-height: 1.4; border: 1.5px solid var(--border-color);">
-                    <b>Versión:</b> 1.84.0 (v84)<br>
-                    <b>Fecha:</b> 26 de Marzo, 2026<br>
+                    <b>Versión:</b> v-1.01.88<br>
+                    <b>Fecha:</b> 15 de abril de 2026<br>
                     <b>Desarrollado por:</b> Xavibc
                 </div>
             </div>
@@ -1295,6 +1416,13 @@
         openTabManager();
         document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
+        // Inicializar ruedas a 0
+        document.querySelectorAll('.wheel-column').forEach(col => {
+            col.scrollTop = 0;
+            const firstItem = col.querySelector('.wheel-item');
+            if (firstItem) firstItem.classList.add('active');
+        });
+
     }
 
 
@@ -1355,6 +1483,13 @@
         openTabManager();
         document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
+        // Inicializar ruedas a 0
+        document.querySelectorAll('.wheel-column').forEach(col => {
+            col.scrollTop = 0;
+            const firstItem = col.querySelector('.wheel-item');
+            if (firstItem) firstItem.classList.add('active');
+        });
+
     }
 
     function deleteCategory(id) {
@@ -1369,6 +1504,13 @@
         openTabManager();
         document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
+        // Inicializar ruedas a 0
+        document.querySelectorAll('.wheel-column').forEach(col => {
+            col.scrollTop = 0;
+            const firstItem = col.querySelector('.wheel-item');
+            if (firstItem) firstItem.classList.add('active');
+        });
+
     }
 
     // GESTIÓN DE CONTACTOS (MODAL)
@@ -1543,16 +1685,49 @@
         if (subId === 'sub-todo') renderTodoList();
     }
 
+    
+    // WHEEL PICKER LOGIC
+    let wheelTimeouts = {};
+
+    function onWheelScroll(prefix, digit, type) {
+        const col = document.getElementById(`${prefix}-${digit}-col`);
+        const items = col.querySelectorAll('.wheel-item');
+        const scrollPos = col.scrollTop;
+        const itemHeight = 50;
+        const index = Math.round(scrollPos / itemHeight);
+
+        // Visual feedback
+        items.forEach((item, i) => {
+            if (i === index) item.classList.add('active');
+            else item.classList.remove('active');
+        });
+
+        // Debounce search
+        const timeoutKey = `${prefix}-${type}`;
+        clearTimeout(wheelTimeouts[timeoutKey]);
+        wheelTimeouts[timeoutKey] = setTimeout(() => {
+            doSearch(type);
+        }, 300);
+    }
+
+    function getWheelValue(prefix) {
+        const h = Math.round(document.getElementById(`${prefix}-h-col`).scrollTop / 50);
+        const t = Math.round(document.getElementById(`${prefix}-t-col`).scrollTop / 50);
+        const u = Math.round(document.getElementById(`${prefix}-u-col`).scrollTop / 50);
+        return parseInt(`${h}${t}${u}`).toString();
+    }
+
+
     function doSearch(type) {
         const area = document.getElementById('viviendas-results-area');
         area.innerHTML = '';
         let results = [];
 
         if (type === 'garaje') {
-            const val = document.getElementById('in-garaje').value;
+            const val = getWheelValue('in-garaje');
             if (val) results = viviendasData.filter(v => v[3] == val);
         } else if (type === 'trastero') {
-            const val = document.getElementById('in-trastero').value;
+            const val = getWheelValue('in-trastero');
             if (val) results = viviendasData.filter(v => v[4] == val);
         } else if (type === 'vivienda') {
             const p = document.getElementById('in-portal').value;
@@ -1708,6 +1883,13 @@
         
         document.body.classList.remove('edit-mode-active');
         renderSidebarAndTabs();
+        // Inicializar ruedas a 0
+        document.querySelectorAll('.wheel-column').forEach(col => {
+            col.scrollTop = 0;
+            const firstItem = col.querySelector('.wheel-item');
+            if (firstItem) firstItem.classList.add('active');
+        });
+
         setTheme(localStorage.getItem('user-theme') || 'light');
     };
 
