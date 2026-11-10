@@ -1,7 +1,7 @@
 {
  "app": "directorio-la-noria",
  "formato": 1,
- "actualizado": "2026-11-10T04:41:39.760Z",
+ "actualizado": "2026-11-10T04:45:19.330Z",
  "categories": [
   {
    "id": "noria",
@@ -44,6 +44,11 @@
    "label": "PORTERILLO",
    "icon": "fas fa-door-open",
    "static": true
+  },
+  {
+   "id": "custom-1794285814930",
+   "label": "PRUEBA",
+   "icon": "fas fa-star"
   }
  ],
  "contacts": {
@@ -516,6 +521,28 @@
     "mail": "info@seguridadkosmos.es",
     "web": "https://www.seguridadkosmos.es/",
     "numbers": []
+   }
+  ],
+  "custom-1794285814930": [
+   {
+    "label": "NOMBRE1",
+    "sublabel": "A VER AQUÍ.",
+    "numbers": [
+     {
+      "label": "CASA",
+      "phone": "2222",
+      "wa": false
+     },
+     {
+      "label": "OTRO MAS",
+      "phone": "333222",
+      "wa": true
+     }
+    ],
+    "address": "",
+    "web": "",
+    "mail": "",
+    "isEmergency": true
    }
   ]
  }
