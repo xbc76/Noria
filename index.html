@@ -410,6 +410,26 @@
         .btn-tab-order { color: var(--text-color); opacity: 0.5; }
         .btn-tab-order:not(:disabled):hover { opacity: 1; color: var(--primary-blue); }
         .btn-tab-order:disabled { opacity: 0.1; cursor: default; }
+
+        #icon-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; max-height: 200px; overflow-y: auto; padding: 6px; border: 1.5px solid var(--border-color); border-radius: 10px; }
+        .icon-opt { height: 42px; border: 1.5px solid var(--border-color); background: var(--bg-color); color: var(--text-color); border-radius: 10px; font-size: 1.05rem; cursor: pointer; }
+        .icon-opt i { color: inherit; }
+        .icon-opt.sel { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+        .adm-row { cursor: default; gap: 6px; }
+        .adm-row .tab-admin-info { min-width: 0; gap: 10px; }
+        .adm-row .tab-admin-actions { gap: 2px; flex: none; }
+        .adm-row .btn-tab-action { font-size: 0.95rem; padding: 7px 8px; }
+        .adm-ell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: bold; }
+        .adm-sub { font-size: 0.72rem; opacity: 0.6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .adm-hidden { opacity: 0.55; }
+        .adm-hidden .adm-ell { text-decoration: line-through; }
+        .adm-tag { font-size: 0.6rem; background: #ff9500; color: #fff; border-radius: 6px; padding: 1px 5px; margin-left: 6px; vertical-align: middle; text-decoration: none; display: inline-block; }
+        .admin-nav { display: flex; gap: 6px; margin: 12px 0; }
+        .admin-nav .sub-btn { font-size: 0.68rem; padding: 10px 2px; }
+        .admin-nav .sub-btn.on { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+        .admin-note { font-size: 0.75rem; opacity: 0.65; line-height: 1.4; margin: 8px 0 12px; }
+        .admin-msg { font-size: 0.82rem; min-height: 1.2em; margin-top: 8px; line-height: 1.4; }
+        .admin-banner { display: none; background: #fff3cd; color: #7a5b00; border: 1.5px solid #ffcc00; border-radius: 10px; padding: 8px 10px; font-size: 0.78rem; margin-top: 10px; font-weight: bold; }
         .btn-close-modal { margin-top: 15px; width: 100%; height: 50px; border-radius: 12px; background: var(--primary-blue); color: white; border: none; font-weight: bold; font-size: 1.1rem; }
 
         
@@ -816,13 +836,18 @@
             <h3 style="margin-top:0">Ajustes de la Aplicación</h3>
 
             <div class="settings-section">
-                <span class="settings-title">Contenido y Pestañas</span>
-                <button class="settings-btn" onclick="openTabManager()">
-                    <i class="fas fa-layer-group"></i> Gestionar Pestañas
+                <span class="settings-title">Administración</span>
+                <button class="settings-btn" onclick="openAdminLogin()">
+                    <i class="fas fa-user-lock"></i> Acceso administración
                 </button>
-                <button class="settings-btn" onclick="toggleEditMode()" id="edit-toggle-btn">
-                    <i class="fas fa-edit"></i> Activar Modo Edición
+            </div>
+
+            <div class="settings-section">
+                <span class="settings-title">Contactos en la nube</span>
+                <button class="settings-btn" onclick="syncFromCloud({manual:true})">
+                    <i class="fas fa-cloud-download-alt"></i> Actualizar contactos
                 </button>
+                <div id="sync-status" style="font-size: 0.75rem; opacity: 0.6; text-align: left; padding: 0 4px;"></div>
             </div>
 
             <div class="settings-section">
@@ -832,28 +857,12 @@
                 </button>
             </div>
 
-            <div class="settings-section">
-                <span class="settings-title">Respaldo</span>
-                <button class="settings-btn" onclick="toggleBackupOptions()">
-                    <i class="fas fa-hdd"></i> Mostrar Opciones de Respaldo
-                </button>
-                <div id="backup-options" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
-                    <button class="settings-btn" onclick="exportData()" style="background: var(--bg-color); border-style: dashed;">
-                        <i class="fas fa-file-export"></i> Exportar Copia
-                    </button>
-                    <button class="settings-btn" onclick="document.getElementById('import-input').click()" style="background: var(--bg-color); border-style: dashed;">
-                        <i class="fas fa-file-import"></i> Importar Copia
-                    </button>
-                <button class="settings-btn" onclick="resetApplicationData()" style="color: #ff3b30; border-color: #ff3b30; margin-top: 10px;"><i class="fas fa-trash-alt"></i> RESET TOTAL DE DATOS</button>
-                </div>
-                <input type="file" id="import-input" style="display:none" onchange="importData(event)" accept=".json">
-            </div>
 
             <div class="settings-section">
                 <span class="settings-title">Información</span>
                 <div style="background: var(--accent-color); padding: 10px; border-radius: 12px; font-size: 0.8rem; text-align: left; line-height: 1.4; border: 1.5px solid var(--border-color);">
-                    <b>Versión:</b> v-1.02.03<br>
-                    <b>Fecha:</b> 17 de agosto de 2026<br>
+                    <b>Versión:</b> v-1.02.06<br>
+                    <b>Fecha:</b> 10 de noviembre de 2026<br>
                     <b>Desarrollado por:</b> Xavibc
                 </div>
             </div>
@@ -896,18 +905,99 @@
         </div>
     </div>
 
-    <!-- Modal Gestión de Pestañas -->
-
-<div class="modal-overlay" id="modal-tab-manager">
-    <div class="modal-content" style="max-width: 400px;">
-        <h3 style="margin-top:0">Gestionar Pestañas</h3>
-        <div id="tab-list-admin" style="text-align: left; margin-bottom: 20px;">
-            <!-- List of categories with edit/delete buttons -->
+    <!-- Modal Acceso Administración -->
+<div class="modal-overlay" id="modal-admin-login" style="z-index: 2050;">
+    <div class="modal-content" style="max-width: 340px;">
+        <h3 style="margin-top:0"><i class="fas fa-user-lock"></i> Administración</h3>
+        <div class="form-group">
+            <label>Usuario</label>
+            <input type="text" id="admin-user" class="form-input" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
         </div>
-        <button class="btn-add-phone" onclick="openEditTabModal()" style="margin-bottom: 15px;">
-            <i class="fas fa-plus"></i> Nueva Pestaña
-        </button>
-        <button class="btn-close-modal" style="background:#888; margin-top:0" onclick="closeTabManager()">CERRAR</button>
+        <div class="form-group" style="margin-bottom: 8px;">
+            <label>Contraseña</label>
+            <input type="password" id="admin-pass" class="form-input" autocomplete="current-password" onkeydown="if(event.key==='Enter') adminLogin()">
+        </div>
+        <div id="admin-login-error" class="admin-msg" style="color:#ff3b30; text-align:left;"></div>
+        <div style="display:flex; gap:10px; margin-top:15px">
+            <button class="btn-close-modal" style="background:#888; margin-top:0" onclick="cancelAdminLogin()">CANCELAR</button>
+            <button class="btn-close-modal" style="margin-top:0" onclick="adminLogin()">ENTRAR</button>
+        </div>
+    </div>
+</div>
+
+<!-- Panel de Administración -->
+<div class="modal-overlay" id="modal-admin" style="z-index: 2050;">
+    <div class="modal-content" style="max-width: 480px; text-align: left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <h3 style="margin:0"><i class="fas fa-user-shield"></i> Administración</h3>
+            <button class="sub-btn" style="flex:none; padding:8px 12px; font-size:0.75rem;" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
+        </div>
+        <div id="admin-dirty-banner" class="admin-banner"><i class="fas fa-exclamation-triangle"></i> Hay cambios sin publicar en la nube (pestaña NUBE)</div>
+
+        <div class="admin-nav">
+            <button class="sub-btn" id="admin-nav-tabs" onclick="adminShow('tabs')">PESTAÑAS</button>
+            <button class="sub-btn" id="admin-nav-contacts" onclick="adminShow('contacts')">CONTACTOS</button>
+            <button class="sub-btn" id="admin-nav-cloud" onclick="adminShow('cloud')">NUBE</button>
+            <button class="sub-btn" id="admin-nav-account" onclick="adminShow('account')">CUENTA</button>
+        </div>
+
+        <!-- Vista: Pestañas -->
+        <div id="admin-view-tabs">
+            <div class="admin-note">Ordena con las flechas, oculta con el ojo, edita con el lápiz. Las pestañas ocultas no aparecen en el menú.</div>
+            <div id="admin-tab-list" style="margin-bottom: 15px;"></div>
+            <button class="btn-add-phone" onclick="openEditTabModal()"><i class="fas fa-plus"></i> Nueva pestaña</button>
+        </div>
+
+        <!-- Vista: Contactos -->
+        <div id="admin-view-contacts" style="display:none;">
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Pestaña</label>
+                <select id="admin-contact-cat" class="form-input" onchange="renderAdminContacts()"></select>
+            </div>
+            <div id="admin-contact-list" style="margin-bottom: 15px;"></div>
+            <button class="btn-add-phone" onclick="openAddModal(byId('admin-contact-cat').value)"><i class="fas fa-plus"></i> Nuevo contacto</button>
+            <button class="settings-btn" style="margin-top: 12px; margin-bottom: 0;" onclick="toggleEditMode()"><i class="fas fa-edit"></i> Editar directamente sobre la lista</button>
+        </div>
+
+        <!-- Vista: Nube -->
+        <div id="admin-view-cloud" style="display:none;">
+            <div class="admin-note">Los contactos se guardan en un archivo JSON de tu repositorio de GitHub. Los demás teléfonos lo leen solos al abrir la app. Para publicar cambios necesitas un <b>token</b> de GitHub (se guarda solo en este teléfono).</div>
+            <div class="form-group"><label>Usuario u organización de GitHub</label><input type="text" id="cf-owner" class="form-input" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+            <div class="form-group"><label>Repositorio</label><input type="text" id="cf-repo" class="form-input" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+            <div style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1"><label>Rama</label><input type="text" id="cf-branch" class="form-input" placeholder="main" autocapitalize="none"></div>
+                <div class="form-group" style="flex:1.4"><label>Archivo JSON</label><input type="text" id="cf-path" class="form-input" placeholder="contactos.json" autocapitalize="none"></div>
+            </div>
+            <div class="form-group"><label>Token de GitHub</label><input type="password" id="cf-token" class="form-input" autocomplete="off" placeholder="(sin cambios)"></div>
+            <div class="form-group"><label>URL de lectura (opcional)</label><input type="url" id="cf-url" class="form-input" placeholder="Solo si el JSON no está junto a la app" autocapitalize="none"></div>
+            <div class="admin-note">Token: GitHub → Settings → Developer settings → Fine-grained tokens. Acceso solo a este repositorio, permiso <b>Contents: Read and write</b>.</div>
+            <button class="settings-btn" onclick="saveCloudConfig()"><i class="fas fa-save"></i> Guardar configuración</button>
+            <button class="btn-close-modal" style="margin-top: 6px;" onclick="publishToCloud()" id="btn-publish"><i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN LA NUBE</button>
+            <button class="settings-btn" style="margin-top: 10px;" onclick="adminPullFromCloud()"><i class="fas fa-cloud-download-alt"></i> Descargar de la nube (reemplaza lo local)</button>
+            <button class="settings-btn" style="color:#ff3b30; border-color:#ff3b30; margin-bottom:0;" onclick="forgetCloudToken()"><i class="fas fa-key" style="color:#ff3b30"></i> Olvidar token de este teléfono</button>
+            <div id="admin-cloud-msg" class="admin-msg"></div>
+        </div>
+
+        <!-- Vista: Cuenta y copia de seguridad -->
+        <div id="admin-view-account" style="display:none;">
+            <span class="settings-title">Cambiar usuario y contraseña</span>
+            <div class="admin-note">El cambio se guarda solo en este teléfono. En otros dispositivos seguirá valiendo el acceso original.</div>
+            <div class="form-group"><label>Usuario</label><input type="text" id="acc-user" class="form-input" autocomplete="off" autocapitalize="none"></div>
+            <div class="form-group"><label>Nueva contraseña (mín. 6 caracteres)</label><input type="password" id="acc-pass" class="form-input" autocomplete="new-password"></div>
+            <div class="form-group"><label>Repetir contraseña</label><input type="password" id="acc-pass2" class="form-input" autocomplete="new-password"></div>
+            <button class="settings-btn" onclick="changeAdminCredentials()"><i class="fas fa-key"></i> Guardar acceso</button>
+            <div id="admin-account-msg" class="admin-msg"></div>
+
+            <div class="settings-section" style="margin-top: 10px;">
+                <span class="settings-title">Copia de seguridad</span>
+                <button class="settings-btn" onclick="exportData()"><i class="fas fa-file-export"></i> Exportar copia</button>
+                <button class="settings-btn" onclick="document.getElementById('import-input').click()"><i class="fas fa-file-import"></i> Importar copia</button>
+                <button class="settings-btn" onclick="resetApplicationData()" style="color: #ff3b30; border-color: #ff3b30;"><i class="fas fa-trash-alt" style="color:#ff3b30"></i> RESET TOTAL DE DATOS</button>
+                <input type="file" id="import-input" style="display:none" onchange="importData(event)" accept=".json">
+            </div>
+        </div>
+
+        <button class="btn-close-modal" style="background:#888; margin-top:20px" onclick="closeAdmin(false)">CERRAR</button>
     </div>
 </div>
 
@@ -921,11 +1011,13 @@
             <input type="text" id="tab-label" class="form-input" placeholder="Ej: TRANSPORTES">
         </div>
         <div class="form-group">
-            <label>Icono (Clase FontAwesome)</label>
-            <input type="text" id="tab-icon" class="form-input" placeholder="Ej: fas fa-bus" value="fas fa-folder">
-            <div style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">
-                Sugerencias: fas fa-building, fas fa-tools, fas fa-ambulance, fas fa-bus, fas fa-shield-alt, fas fa-info-circle
+            <label>Icono</label>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                <div id="icon-preview" style="width:46px; height:46px; flex:none; border-radius:12px; border:2px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:var(--primary-blue);"><i class="fas fa-folder"></i></div>
+                <input type="text" id="icon-search" class="form-input" placeholder="Buscar (bus, casa, médico...)" oninput="filterIcons()" autocomplete="off">
             </div>
+            <input type="hidden" id="tab-icon" value="fas fa-folder">
+            <div id="icon-grid"></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:20px">
             <button class="btn-close-modal" style="background:#888; margin-top:0" onclick="closeEditTabModal()">CANCELAR</button>
@@ -935,10 +1027,11 @@
 </div>
 
 <!-- Modal Añadir/Editar Contacto -->
-<div class="modal-overlay" id="modal-add-contact">
+<div class="modal-overlay" id="modal-add-contact" style="z-index: 2100;">
     <div class="modal-content">
         <h3 id="modal-contact-title" style="margin-top:0">Añadir Contacto</h3>
         <input type="hidden" id="edit-index" value="">
+        <input type="hidden" id="edit-orig-cat" value="">
         <div class="form-group">
             <label>Categoría</label>
             <select id="add-category" class="form-input">
@@ -975,6 +1068,11 @@
         <div class="form-group">
             <label>Email</label>
             <input type="email" id="add-mail" class="form-input" placeholder="ejemplo@correo.com">
+        </div>
+
+        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+            <input type="checkbox" id="add-emergency" style="width:20px; height:20px; flex:none">
+            <label for="add-emergency" style="margin:0">Marcar como emergencia (borde rojo)</label>
         </div>
 
         <div style="display:flex; gap:10px; margin-top:25px">
@@ -1151,27 +1249,31 @@
 
     
     function renderSidebarAndTabs() {
-        const sidebarLinks = document.getElementById('sidebar-links');
-        const mainContent = document.getElementById('main-content');
+        const sidebarLinks = byId('sidebar-links');
+        const mainContent = byId('main-content');
         if (!sidebarLinks || !mainContent) return;
 
         sidebarLinks.innerHTML = '';
         // Guardar tabs estáticos
         const staticTabs = {
-            viviendas: document.getElementById('viviendas'),
-            porterillo: document.getElementById('porterillo')
+            viviendas: byId('viviendas'),
+            porterillo: byId('porterillo')
         };
 
         // Eliminar tab-contents dinámicos previos
         document.querySelectorAll('.tab-content:not(#viviendas):not(#porterillo)').forEach(c => c.remove());
+        Object.values(staticTabs).forEach(t => { if (t) t.classList.remove('active'); });
 
-        
-        userCategories.forEach((cat, index) => {
-            if (!cat.id) return;
+        // La primera pestaña visible (no oculta) es la que se abre al iniciar
+        const firstVisible = userCategories.find(c => c && c.id && !c.hidden);
+
+        userCategories.forEach(cat => {
+            if (!cat.id || cat.hidden) return;
+            const isFirst = !!firstVisible && cat.id === firstVisible.id;
 
             // 1. Sidebar link
             const link = document.createElement('div');
-            link.className = 'sidebar-item' + (index === 0 ? ' active' : '');
+            link.className = 'sidebar-item' + (isFirst ? ' active' : '');
             link.id = `link-${cat.id}`;
             link.innerHTML = `<i class="${cat.icon}"></i> ${cat.label}`;
             link.onclick = () => openTab(cat.id);
@@ -1181,17 +1283,22 @@
             if (!cat.static) {
                 const tabDiv = document.createElement('div');
                 tabDiv.id = cat.id;
-                tabDiv.className = 'tab-content' + (index === 0 ? ' active' : '');
+                tabDiv.className = 'tab-content' + (isFirst ? ' active' : '');
                 // Añadimos un contenedor interno único para los contactos
                 tabDiv.innerHTML = `<div id="list-container-${cat.id}"></div>`;
                 mainContent.appendChild(tabDiv);
                 renderCategoryContacts(cat.id);
             } else if (staticTabs[cat.id]) {
-                staticTabs[cat.id].classList.toggle('active', index === 0);
+                staticTabs[cat.id].classList.toggle('active', isFirst);
             }
         });
 
-        if (userCategories.length > 0) { openTab(userCategories[0].id); }
+        if (firstVisible) {
+            openTab(firstVisible.id);
+        } else {
+            const t = byId('page-title');
+            if (t) t.innerText = 'DIRECTORIO';
+        }
     }
 
 
@@ -1349,7 +1456,7 @@
     function closeSettingsModal() {
         document.getElementById('modal-settings').style.display = 'none';
         if (history.state && history.state.modal === 'settings') {
-            history.back();
+            popModalHistory();
         }
     }
 
@@ -1363,155 +1470,605 @@
         document.getElementById('modal-theme-selector').style.display = 'none';
         document.getElementById('modal-settings').style.display = 'flex';
         if (history.state && history.state.modal === 'themes') {
-            history.back();
+            popModalHistory();
         }
     }
 
     // MODO EDICIÓN
-    function toggleEditMode() {
-        const isActive = document.body.classList.toggle('edit-mode-active');
-        const btn = document.getElementById('edit-toggle-btn');
-        const fab = document.getElementById('fab-add');
-        
-        if (isActive) {
-            btn.innerHTML = '<i class="fas fa-check"></i> Desactivar Modo Edición';
-            btn.style.color = '#34c759';
-            // Cerrar todos los acordeones
-            document.querySelectorAll('.contact-item.expanded').forEach(el => el.classList.remove('expanded'));
-            
-            // Mostrar FAB si la pestaña actual no es estática
-            const activeTabId = document.querySelector('.tab-content.active').id;
-            const category = userCategories.find(c => c.id === activeTabId);
-            if (category && !category.static) fab.style.display = 'flex';
-        } else {
-            btn.innerHTML = '<i class="fas fa-edit"></i> Activar Modo Edición';
-            btn.style.color = '';
-            fab.style.display = 'none';
-        }
-        
-        closeSettingsModal();
+    // ===================== UTILIDADES =====================
+    function byId(id) { return document.getElementById(id); }
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     }
 
-    // GESTIÓN DE PESTAÑAS (DRAG & DROP)
-    let dragSrcEl = null;
-
-    function openTabManager() {
-        document.getElementById('modal-settings').style.display = 'none';
-        const container = document.getElementById('tab-list-admin');
-        container.innerHTML = '';
-        
-        userCategories.forEach((cat, index) => {
-            const item = document.createElement('div');
-            item.className = 'tab-admin-item';
-            item.setAttribute('draggable', 'true');
-            item.dataset.index = index;
-            
-            // Eventos Desktop
-            item.addEventListener('dragstart', handleDragStart);
-            item.addEventListener('dragover', handleDragOver);
-            item.addEventListener('drop', handleDrop);
-            item.addEventListener('dragend', handleDragEnd);
-            
-            // Eventos Mobile (Touch)
-            item.addEventListener('touchstart', handleTouchStart, {passive: false});
-            item.addEventListener('touchmove', handleTouchMove, {passive: false});
-            item.addEventListener('touchend', handleTouchEnd);
-
-            item.innerHTML = `
-                <div class="tab-admin-info">
-                    <i class="fas fa-bars tab-drag-handle"></i>
-                    <i class="${cat.icon}" style="width:20px; color:var(--primary-blue)"></i>
-                    <span style="font-weight:bold">${cat.label}</span>
-                </div>
-                <div class="tab-admin-actions">
-                    <button class="btn-tab-action btn-tab-edit" onclick="openEditTabModal('${cat.id}')"><i class="fas fa-pen"></i></button>
-                    ${!cat.static ? `<button class="btn-tab-action" style="color:#ff3b30" onclick="deleteCategory('${cat.id}')"><i class="fas fa-trash"></i></button>` : '<div style="width:24px"></div>'}
-                </div>
-            `;
-            container.appendChild(item);
-        });
-
-        document.getElementById('modal-tab-manager').style.display = 'flex';
-        history.pushState({modal: 'tabs'}, '');
+    function showToast(msg) {
+        const t = byId('toast');
+        if (!t) return;
+        t.innerText = msg;
+        t.style.display = 'block';
+        t.style.opacity = '1';
+        t.style.animation = 'none';
+        t.offsetHeight; // reflow
+        t.style.animation = 'fadeInOut 2.5s ease forwards';
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => { t.style.display = 'none'; }, 2500);
     }
 
-    function closeTabManager() {
-        document.getElementById('modal-tab-manager').style.display = 'none';
-        document.getElementById('modal-settings').style.display = 'flex';
-        if (history.state && history.state.modal === 'tabs') {
-            history.back();
-        }
+    // Cierra un modal sin que el evento popstate cierre también los de debajo
+    let ignorePop = false;
+    function popModalHistory() {
+        ignorePop = true;
+        history.back();
+        setTimeout(() => { ignorePop = false; }, 600);
     }
 
-    // Lógica Drag & Drop (Desktop)
-    function handleDragStart(e) {
-        dragSrcEl = this;
-        this.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', this.dataset.index);
-    }
-    function handleDragOver(e) {
-        if (e.preventDefault) e.preventDefault();
-        return false;
-    }
-    function handleDrop(e) {
-        if (e.stopPropagation) e.stopPropagation();
-        const fromIndex = parseInt(dragSrcEl.dataset.index);
-        const toIndex = parseInt(this.dataset.index);
-        
-        if (fromIndex !== toIndex) {
-            reorderCategories(fromIndex, toIndex);
-        }
-        return false;
-    }
-    function handleDragEnd() {
-        this.classList.remove('dragging');
-    }
-
-    // Lógica Drag & Drop (Mobile - Touch)
-    let touchStartY = 0;
-    let touchSrcEl = null;
-
-    function handleTouchStart(e) {
-        touchSrcEl = e.currentTarget;
-        touchStartY = e.touches[0].clientY;
-        touchSrcEl.classList.add('dragging');
-    }
-    function handleTouchMove(e) {
-        e.preventDefault();
-        const touchY = e.touches[0].clientY;
-        const targetEl = document.elementFromPoint(e.touches[0].clientX, touchY);
-        const item = targetEl ? targetEl.closest('.tab-admin-item') : null;
-        
-        if (item && item !== touchSrcEl) {
-            const fromIndex = parseInt(touchSrcEl.dataset.index);
-            const toIndex = parseInt(item.dataset.index);
-            reorderCategories(fromIndex, toIndex);
-            touchSrcEl = document.querySelector(`.tab-admin-item[data-index="${toIndex}"]`);
-            touchSrcEl.classList.add('dragging');
-        }
-    }
-    function handleTouchEnd() {
-        if (touchSrcEl) touchSrcEl.classList.remove('dragging');
-        touchSrcEl = null;
-    }
-
-    function reorderCategories(from, to) {
-        const item = userCategories.splice(from, 1)[0];
-        userCategories.splice(to, 0, item);
-        localStorage.setItem('user-categories', JSON.stringify(userCategories));
-        openTabManager();
-        document.body.classList.remove('edit-mode-active');
-        renderSidebarAndTabs();
-        // Inicializar ruedas a 0
+    function resetWheels() {
         document.querySelectorAll('.wheel-column').forEach(col => {
             col.scrollTop = 0;
             const firstItem = col.querySelector('.wheel-item');
             if (firstItem) firstItem.classList.add('active');
         });
-
     }
 
+    // Guarda pestañas y contactos en el teléfono y marca "pendiente de publicar"
+    function persistData() {
+        localStorage.setItem('user-categories', JSON.stringify(userCategories));
+        localStorage.setItem('user-contacts', JSON.stringify(userContacts));
+        localStorage.setItem('cloud-dirty', 'true');
+        updateDirtyBanner();
+    }
+
+    function rerenderAll(keepTab) {
+        const active = document.querySelector('.tab-content.active');
+        const activeId = active ? active.id : null;
+        renderSidebarAndTabs();
+        if (keepTab && activeId && userCategories.some(c => c.id === activeId && !c.hidden)) openTab(activeId);
+        resetWheels();
+    }
+
+    function updateDirtyBanner() {
+        const b = byId('admin-dirty-banner');
+        if (b) b.style.display = localStorage.getItem('cloud-dirty') === 'true' ? 'block' : 'none';
+    }
+
+    function refreshAdminLists() {
+        const m = byId('modal-admin');
+        if (m && m.style.display === 'flex') {
+            renderAdminTabs();
+            renderAdminContactSelect();
+            renderAdminContacts();
+            updateDirtyBanner();
+        }
+    }
+
+    // MODO EDICIÓN (solo desde administración)
+    function toggleEditMode() {
+        if (!adminSession) return;
+        const isActive = document.body.classList.toggle('edit-mode-active');
+        const fab = byId('fab-add');
+
+        if (isActive) {
+            document.querySelectorAll('.contact-item.expanded').forEach(e => e.classList.remove('expanded'));
+            const active = document.querySelector('.tab-content.active');
+            const category = active ? userCategories.find(c => c.id === active.id) : null;
+            fab.style.display = (category && !category.static) ? 'flex' : 'none';
+            closeAdmin(true);
+        } else {
+            fab.style.display = 'none';
+            openAdminPanel(true);
+        }
+    }
+
+    // ===================== ADMINISTRACIÓN: ACCESO =====================
+    const ADMIN_SALT = 'noria-admin-v1';
+
+    function sha256(msg) {
+        function rr(n, x) { return (x >>> n) | (x << (32 - n)); }
+        const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+        let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+        const s = unescape(encodeURIComponent(msg));
+        const bytes = [];
+        for (let i = 0; i < s.length; i++) bytes.push(s.charCodeAt(i));
+        const bitLen = bytes.length * 8;
+        bytes.push(0x80);
+        while (bytes.length % 64 !== 56) bytes.push(0);
+        const hi = Math.floor(bitLen / 0x100000000), lo = bitLen >>> 0;
+        bytes.push((hi>>>24)&255,(hi>>>16)&255,(hi>>>8)&255,hi&255,(lo>>>24)&255,(lo>>>16)&255,(lo>>>8)&255,lo&255);
+        for (let off = 0; off < bytes.length; off += 64) {
+            const w = new Array(64);
+            for (let i = 0; i < 16; i++) w[i] = (bytes[off+i*4]<<24)|(bytes[off+i*4+1]<<16)|(bytes[off+i*4+2]<<8)|bytes[off+i*4+3];
+            for (let i = 16; i < 64; i++) {
+                const s0 = rr(7,w[i-15]) ^ rr(18,w[i-15]) ^ (w[i-15]>>>3);
+                const s1 = rr(17,w[i-2]) ^ rr(19,w[i-2]) ^ (w[i-2]>>>10);
+                w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0;
+            }
+            let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+            for (let i = 0; i < 64; i++) {
+                const S1 = rr(6,e) ^ rr(11,e) ^ rr(25,e);
+                const ch = (e & f) ^ (~e & g);
+                const t1 = (h + S1 + ch + K[i] + w[i]) | 0;
+                const S0 = rr(2,a) ^ rr(13,a) ^ rr(22,a);
+                const maj = (a & b) ^ (a & c) ^ (b & c);
+                const t2 = (S0 + maj) | 0;
+                h=g; g=f; f=e; e=(d+t1)|0; d=c; c=b; b=a; a=(t1+t2)|0;
+            }
+            H = [(H[0]+a)|0,(H[1]+b)|0,(H[2]+c)|0,(H[3]+d)|0,(H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];
+        }
+        return H.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
+    }
+
+    function adminHash(user, pass) {
+        let h = sha256(ADMIN_SALT + '|' + String(user).trim().toLowerCase() + '|' + pass);
+        for (let i = 0; i < 2000; i++) h = sha256(h + ADMIN_SALT);
+        return h;
+    }
+
+    // Acceso por defecto: usuario y contraseña de administración (se puede cambiar en CUENTA)
+    const ADMIN_DEFAULT_HASH = '5ffa6ee6feb70eb366e7029ff3045f2b93f881b426aaf57db4cfbff862b2cb5c';
+    let adminSession = false;
+    let adminView = 'tabs';
+    let loginFails = 0;
+    let loginLockUntil = 0;
+
+    function getAdminHash() { return localStorage.getItem('admin-cred') || ADMIN_DEFAULT_HASH; }
+
+    function openAdminLogin() {
+        byId('modal-settings').style.display = 'none';
+        if (adminSession) { openAdminPanel(true); return; }
+        byId('admin-pass').value = '';
+        byId('admin-login-error').textContent = '';
+        byId('modal-admin-login').style.display = 'flex';
+        history.pushState({modal: 'admin-login'}, '');
+        setTimeout(() => byId('admin-user').focus(), 60);
+    }
+
+    function cancelAdminLogin() {
+        byId('modal-admin-login').style.display = 'none';
+        byId('modal-settings').style.display = 'flex';
+        if (history.state && history.state.modal === 'admin-login') popModalHistory();
+    }
+
+    function adminLogin() {
+        const now = Date.now();
+        const err = byId('admin-login-error');
+        if (now < loginLockUntil) {
+            err.textContent = 'Demasiados intentos. Espera ' + Math.ceil((loginLockUntil - now) / 1000) + ' s';
+            return;
+        }
+        const u = byId('admin-user').value;
+        const p = byId('admin-pass').value;
+        if (adminHash(u, p) === getAdminHash()) {
+            loginFails = 0;
+            adminSession = true;
+            byId('modal-admin-login').style.display = 'none';
+            history.replaceState({modal: 'admin'}, '');
+            openAdminPanel(false);
+        } else {
+            loginFails++;
+            byId('admin-pass').value = '';
+            if (loginFails >= 5) {
+                loginLockUntil = now + 30000;
+                loginFails = 0;
+                err.textContent = 'Demasiados intentos. Espera 30 s';
+            } else {
+                err.textContent = 'Usuario o contraseña incorrectos';
+            }
+        }
+    }
+
+    function openAdminPanel(push) {
+        byId('modal-admin').style.display = 'flex';
+        if (push) history.pushState({modal: 'admin'}, '');
+        adminShow(adminView || 'tabs');
+    }
+
+    function closeAdmin(keepSession) {
+        byId('modal-admin').style.display = 'none';
+        if (history.state && history.state.modal === 'admin') popModalHistory();
+        if (!keepSession) adminSession = false;
+    }
+
+    function adminLogout() {
+        if (document.body.classList.contains('edit-mode-active')) {
+            document.body.classList.remove('edit-mode-active');
+            byId('fab-add').style.display = 'none';
+        }
+        closeAdmin(false);
+    }
+
+    function adminShow(view) {
+        adminView = view;
+        ['tabs', 'contacts', 'cloud', 'account'].forEach(v => {
+            byId('admin-view-' + v).style.display = (v === view) ? 'block' : 'none';
+            byId('admin-nav-' + v).classList.toggle('on', v === view);
+        });
+        if (view === 'tabs') renderAdminTabs();
+        if (view === 'contacts') { renderAdminContactSelect(); renderAdminContacts(); }
+        if (view === 'cloud') loadCloudForm();
+        if (view === 'account') { byId('acc-pass').value = ''; byId('acc-pass2').value = ''; byId('admin-account-msg').textContent = ''; }
+        updateDirtyBanner();
+    }
+
+    function changeAdminCredentials() {
+        const msg = byId('admin-account-msg');
+        const u = byId('acc-user').value.trim();
+        const p1 = byId('acc-pass').value;
+        const p2 = byId('acc-pass2').value;
+        msg.style.color = '#ff3b30';
+        if (!u) { msg.textContent = 'Escribe un usuario'; return; }
+        if (p1.length < 6) { msg.textContent = 'La contraseña debe tener al menos 6 caracteres'; return; }
+        if (p1 !== p2) { msg.textContent = 'Las contraseñas no coinciden'; return; }
+        localStorage.setItem('admin-cred', adminHash(u, p1));
+        byId('acc-pass').value = '';
+        byId('acc-pass2').value = '';
+        msg.style.color = '#34c759';
+        msg.textContent = 'Acceso actualizado en este teléfono';
+    }
+
+    // ===================== ADMINISTRACIÓN: PESTAÑAS =====================
+    function renderAdminTabs() {
+        byId('admin-tab-list').innerHTML = userCategories.map((cat, i) => `
+            <div class="tab-admin-item adm-row ${cat.hidden ? 'adm-hidden' : ''}">
+                <div class="tab-admin-info">
+                    <i class="${esc(cat.icon)}" style="width:20px; color:var(--primary-blue)"></i>
+                    <span class="adm-ell">${esc(cat.label)}${cat.hidden ? '<span class="adm-tag">OCULTA</span>' : ''}</span>
+                </div>
+                <div class="tab-admin-actions">
+                    <button class="btn-tab-action btn-tab-order" onclick="moveCategory(${i}, -1)" ${i === 0 ? 'disabled' : ''}><i class="fas fa-chevron-up"></i></button>
+                    <button class="btn-tab-action btn-tab-order" onclick="moveCategory(${i}, 1)" ${i === userCategories.length - 1 ? 'disabled' : ''}><i class="fas fa-chevron-down"></i></button>
+                    <button class="btn-tab-action btn-tab-edit" onclick="toggleCategoryHidden(${i})"><i class="fas ${cat.hidden ? 'fa-eye-slash' : 'fa-eye'}"></i></button>
+                    <button class="btn-tab-action btn-tab-edit" onclick="openEditTabModal('${esc(cat.id)}')"><i class="fas fa-pen"></i></button>
+                    ${!cat.static ? `<button class="btn-tab-action" style="color:#ff3b30" onclick="deleteCategory('${esc(cat.id)}')"><i class="fas fa-trash"></i></button>` : '<span style="width:30px"></span>'}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function moveCategory(i, dir) {
+        if (!adminSession) return;
+        const j = i + dir;
+        if (j < 0 || j >= userCategories.length) return;
+        const tmp = userCategories[i];
+        userCategories[i] = userCategories[j];
+        userCategories[j] = tmp;
+        persistData();
+        rerenderAll(true);
+        refreshAdminLists();
+    }
+
+    function toggleCategoryHidden(i) {
+        if (!adminSession) return;
+        const cat = userCategories[i];
+        if (!cat) return;
+        if (cat.hidden) delete cat.hidden; else cat.hidden = true;
+        persistData();
+        rerenderAll(true);
+        refreshAdminLists();
+    }
+
+    // ===================== ADMINISTRACIÓN: CONTACTOS =====================
+    function renderAdminContactSelect() {
+        const sel = byId('admin-contact-cat');
+        const prev = sel.value;
+        sel.innerHTML = userCategories.filter(c => !c.static).map(c =>
+            `<option value="${esc(c.id)}">${esc(c.label)}${c.hidden ? ' (oculta)' : ''}</option>`).join('');
+        if (prev && Array.from(sel.options).some(o => o.value === prev)) sel.value = prev;
+    }
+
+    function renderAdminContacts() {
+        const box = byId('admin-contact-list');
+        const catId = byId('admin-contact-cat').value;
+        if (!catId) { box.innerHTML = '<div class="admin-note">No hay pestañas de contactos.</div>'; return; }
+        const list = userContacts[catId] || [];
+        if (!list.length) { box.innerHTML = '<div class="admin-note">Esta pestaña todavía no tiene contactos.</div>'; return; }
+        box.innerHTML = list.map((c, i) => `
+            <div class="tab-admin-item adm-row">
+                <div class="tab-admin-info">
+                    <div style="min-width:0">
+                        <div class="adm-ell">${c.isEmergency ? '<i class="fas fa-exclamation-circle" style="color:#ff3b30"></i> ' : ''}${esc(c.label)}</div>
+                        ${c.sublabel ? `<div class="adm-sub">${esc(c.sublabel)}</div>` : ''}
+                    </div>
+                </div>
+                <div class="tab-admin-actions">
+                    <button class="btn-tab-action btn-tab-order" onclick="moveContact('${esc(catId)}', ${i}, -1)" ${i === 0 ? 'disabled' : ''}><i class="fas fa-chevron-up"></i></button>
+                    <button class="btn-tab-action btn-tab-order" onclick="moveContact('${esc(catId)}', ${i}, 1)" ${i === list.length - 1 ? 'disabled' : ''}><i class="fas fa-chevron-down"></i></button>
+                    <button class="btn-tab-action btn-tab-edit" onclick="editContact('${esc(catId)}', ${i})"><i class="fas fa-pen"></i></button>
+                    <button class="btn-tab-action" style="color:#ff3b30" onclick="deleteContact('${esc(catId)}', ${i})"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function moveContact(catId, i, dir) {
+        if (!adminSession) return;
+        const list = userContacts[catId];
+        const j = i + dir;
+        if (!list || j < 0 || j >= list.length) return;
+        const tmp = list[i];
+        list[i] = list[j];
+        list[j] = tmp;
+        persistData();
+        renderCategoryContacts(catId);
+        refreshAdminLists();
+    }
+
+    // ===================== NUBE (GITHUB) =====================
+    const CLOUD_FILE = 'contactos.json';
+    let lastSyncTry = 0;
+
+    function detectGithub() {
+        const host = location.hostname;
+        if (!host.endsWith('.github.io')) return {};
+        const owner = host.split('.')[0];
+        const seg = location.pathname.split('/').filter(Boolean)[0];
+        const repo = (seg && !/\.[a-z0-9]+$/i.test(seg)) ? seg : host;
+        return { owner, repo };
+    }
+
+    function getCloudCfg() {
+        let c = {};
+        try { c = JSON.parse(localStorage.getItem('cloud-config')) || {}; } catch (e) { c = {}; }
+        const d = detectGithub();
+        return {
+            owner: c.owner || d.owner || '',
+            repo: c.repo || d.repo || '',
+            branch: c.branch || 'main',
+            path: c.path || CLOUD_FILE,
+            token: c.token || '',
+            url: c.url || ''
+        };
+    }
+
+    function loadCloudForm() {
+        const c = getCloudCfg();
+        byId('cf-owner').value = c.owner;
+        byId('cf-repo').value = c.repo;
+        byId('cf-branch').value = c.branch;
+        byId('cf-path').value = c.path;
+        byId('cf-url').value = c.url;
+        byId('cf-token').value = '';
+        byId('cf-token').placeholder = c.token ? '•••••••• (guardado, sin cambios)' : 'Pega aquí tu token';
+        cloudMsg('', true);
+    }
+
+    function saveCloudConfig(silent) {
+        const old = getCloudCfg();
+        const tok = byId('cf-token').value.trim();
+        const cfg = {
+            owner: byId('cf-owner').value.trim(),
+            repo: byId('cf-repo').value.trim(),
+            branch: byId('cf-branch').value.trim() || 'main',
+            path: byId('cf-path').value.trim() || CLOUD_FILE,
+            token: tok || old.token,
+            url: byId('cf-url').value.trim()
+        };
+        localStorage.setItem('cloud-config', JSON.stringify(cfg));
+        loadCloudForm();
+        if (!silent) cloudMsg('Configuración guardada en este teléfono', true);
+    }
+
+    function forgetCloudToken() {
+        const c = getCloudCfg();
+        c.token = '';
+        localStorage.setItem('cloud-config', JSON.stringify(c));
+        loadCloudForm();
+        cloudMsg('Token eliminado de este teléfono', true);
+    }
+
+    function cloudMsg(text, ok) {
+        const m = byId('admin-cloud-msg');
+        if (!m) return;
+        m.style.color = ok ? '#34c759' : '#ff3b30';
+        m.textContent = text;
+    }
+
+    function setSyncStatus() {
+        const s = byId('sync-status');
+        if (!s) return;
+        const last = localStorage.getItem('cloud-last');
+        s.textContent = last
+            ? 'Última sincronización: ' + new Date(last).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+            : 'Todavía no se ha sincronizado';
+    }
+
+    function applyCloudData(data) {
+        userCategories = data.categories;
+        userContacts = data.contacts;
+        userCategories.forEach(cat => {
+            if (!cat.static && !Array.isArray(userContacts[cat.id])) userContacts[cat.id] = [];
+        });
+        localStorage.setItem('user-categories', JSON.stringify(userCategories));
+        localStorage.setItem('user-contacts', JSON.stringify(userContacts));
+        localStorage.setItem('cloud-stamp', data.actualizado || '');
+        localStorage.setItem('cloud-dirty', 'false');
+        localStorage.setItem('cloud-last', new Date().toISOString());
+        rerenderAll(true);
+        refreshAdminLists();
+        setSyncStatus();
+    }
+
+    async function syncFromCloud(opts) {
+        const manual = !!(opts && opts.manual);
+        const force = !!(opts && opts.force);
+        lastSyncTry = Date.now();
+        try {
+            const cfg = getCloudCfg();
+            const base = cfg.url || cfg.path;
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 10000);
+            const res = await fetch(base + (base.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store', signal: ctrl.signal });
+            clearTimeout(timer);
+            if (!res.ok) throw new Error(res.status === 404 ? 'todavía no hay archivo en la nube' : 'error ' + res.status);
+            const data = await res.json();
+            if (!data || !Array.isArray(data.categories) || !data.contacts || typeof data.contacts !== 'object') {
+                throw new Error('el archivo de la nube no tiene un formato válido');
+            }
+            const stamp = data.actualizado || '';
+            const dirty = localStorage.getItem('cloud-dirty') === 'true';
+
+            if (!force) {
+                if (dirty) {
+                    if (!manual) return; // no pisar cambios sin publicar
+                    if (!confirm('Tienes cambios sin publicar en este teléfono. ¿Reemplazarlos por los de la nube?')) return;
+                } else if (stamp && stamp <= (localStorage.getItem('cloud-stamp') || '')) {
+                    localStorage.setItem('cloud-last', new Date().toISOString());
+                    setSyncStatus();
+                    if (manual) showToast('Ya tienes la última versión');
+                    return;
+                }
+            }
+            applyCloudData(data);
+            if (manual) { showToast('Contactos actualizados'); cloudMsg('Descargado de la nube correctamente', true); }
+        } catch (e) {
+            const why = (e && e.name === 'AbortError') ? 'tiempo de espera agotado' : (e && e.message) || 'sin conexión';
+            if (manual) { showToast('No se pudo actualizar: ' + why); cloudMsg('No se pudo descargar: ' + why, false); }
+        }
+    }
+
+    function adminPullFromCloud() {
+        if (!adminSession) return;
+        if (!confirm('Se reemplazarán las pestañas y contactos de este teléfono por los de la nube. ¿Continuar?')) return;
+        syncFromCloud({ manual: true, force: true });
+    }
+
+    async function ghError(res) {
+        let m = '';
+        try { m = (await res.json()).message || ''; } catch (e) {}
+        if (res.status === 401) return new Error('Token no válido o caducado');
+        if (res.status === 403) return new Error('Sin permiso: el token necesita "Contents: Read and write" ' + (m ? '(' + m + ')' : ''));
+        if (res.status === 404) return new Error('No se encuentra el repositorio o la rama (revisa nombre y acceso del token)');
+        return new Error('GitHub ' + res.status + (m ? ': ' + m : ''));
+    }
+
+    async function publishToCloud() {
+        if (!adminSession) return;
+        const btn = byId('btn-publish');
+        const c = getCloudCfg();
+        if (!c.owner || !c.repo || !c.token) {
+            cloudMsg('Completa usuario, repositorio y token y pulsa "Guardar configuración".', false);
+            return;
+        }
+        const label = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PUBLICANDO...';
+        cloudMsg('', true);
+
+        const payload = {
+            app: 'directorio-la-noria',
+            formato: 1,
+            actualizado: new Date().toISOString(),
+            categories: userCategories,
+            contacts: userContacts
+        };
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 1))));
+        const api = 'https://api.github.com/repos/' + encodeURIComponent(c.owner) + '/' + encodeURIComponent(c.repo)
+            + '/contents/' + c.path.split('/').map(encodeURIComponent).join('/');
+        const headers = {
+            'Authorization': 'Bearer ' + c.token,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+        };
+
+        try {
+            let done = false;
+            for (let attempt = 0; attempt < 2 && !done; attempt++) {
+                let sha;
+                const g = await fetch(api + '?ref=' + encodeURIComponent(c.branch) + '&t=' + Date.now(), { headers, cache: 'no-store' });
+                if (g.status === 200) sha = (await g.json()).sha;
+                else if (g.status !== 404) throw await ghError(g);
+
+                const body = {
+                    message: 'Actualizar contactos (' + new Date().toLocaleString('es-ES') + ')',
+                    content: content,
+                    branch: c.branch
+                };
+                if (sha) body.sha = sha;
+                const p = await fetch(api, { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify(body) });
+                if (p.ok) { done = true; break; }
+                if (p.status === 409 && attempt === 0) continue; // el archivo cambió: reintentar con el sha nuevo
+                throw await ghError(p);
+            }
+            if (!done) throw new Error('No se pudo publicar, inténtalo de nuevo');
+            localStorage.setItem('cloud-stamp', payload.actualizado);
+            localStorage.setItem('cloud-dirty', 'false');
+            localStorage.setItem('cloud-last', new Date().toISOString());
+            updateDirtyBanner();
+            setSyncStatus();
+            cloudMsg('Publicado. Los demás teléfonos lo recibirán en unos minutos (GitHub tarda un poco en actualizar la web).', true);
+            showToast('Publicado en la nube');
+        } catch (e) {
+            cloudMsg('No se pudo publicar: ' + ((e && e.message) || 'sin conexión'), false);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = label;
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && Date.now() - lastSyncTry > 300000) syncFromCloud();
+    });
+
+    // ===================== SELECTOR DE ICONOS =====================
+    const TAB_ICONS = [
+        ['building', 'edificio bloque urbanizacion comunidad'], ['home', 'casa vivienda hogar inicio'], ['door-open', 'puerta porterillo entrada acceso'],
+        ['key', 'llave acceso'], ['lock', 'candado seguridad cerradura'], ['shield-alt', 'escudo seguridad proteccion mutua'],
+        ['user-shield', 'vigilante seguridad guarda'], ['video', 'camara video vigilancia cctv'], ['camera', 'foto camara'],
+        ['bell', 'campana aviso alarma'], ['bullhorn', 'megafono aviso anuncio'], ['exclamation-triangle', 'peligro aviso alerta'],
+        ['fire', 'fuego incendio bomberos'], ['fire-extinguisher', 'extintor incendio'], ['ambulance', 'ambulancia emergencias urgencias'],
+        ['medkit', 'botiquin sanidad medico'], ['hospital', 'hospital sanidad urgencias'], ['user-md', 'medico doctor sanidad'],
+        ['stethoscope', 'medico doctor sanidad'], ['pills', 'farmacia medicina pastillas'], ['heartbeat', 'salud corazon pulso'],
+        ['tooth', 'dentista dental'], ['paw', 'mascota veterinario animal'], ['wheelchair', 'accesibilidad discapacidad'],
+        ['baby', 'bebe nino pediatra'], ['phone', 'telefono llamada'], ['mobile-alt', 'movil telefono'],
+        ['headset', 'atencion cliente soporte telefono'], ['envelope', 'correo email carta'], ['comments', 'mensajes chat whatsapp'],
+        ['address-book', 'agenda contactos directorio'], ['id-card', 'identificacion carnet persona'], ['info-circle', 'informacion info'],
+        ['map-marker-alt', 'ubicacion mapa lugar direccion'], ['globe', 'web internet mundo'], ['wifi', 'internet wifi red'],
+        ['bus', 'autobus transporte'], ['taxi', 'taxi transporte'], ['train', 'tren renfe transporte'],
+        ['plane', 'avion aeropuerto vuelo'], ['ship', 'barco puerto ferry'], ['car', 'coche vehiculo'],
+        ['motorcycle', 'moto'], ['bicycle', 'bici bicicleta'], ['truck', 'camion mudanza reparto'],
+        ['gas-pump', 'gasolinera combustible surtidor'], ['parking', 'parking garaje aparcamiento'], ['tools', 'servicios herramientas reparaciones'],
+        ['wrench', 'llave inglesa mantenimiento averias'], ['hammer', 'martillo obras reformas'], ['paint-roller', 'pintor pintura obras'],
+        ['hard-hat', 'obras construccion casco'], ['plug', 'enchufe electricidad'], ['bolt', 'electricidad luz rayo'],
+        ['lightbulb', 'luz bombilla electricista'], ['water', 'agua fontanero'], ['tint', 'agua gota fontaneria'],
+        ['shower', 'ducha bano fontanero'], ['thermometer-half', 'temperatura calefaccion clima'], ['wind', 'aire acondicionado ventilacion'],
+        ['broom', 'limpieza barrer'], ['trash-alt', 'basura residuos contenedor'], ['recycle', 'reciclaje basura'],
+        ['leaf', 'jardin plantas jardineria'], ['tree', 'arbol jardin zonas verdes'], ['swimmer', 'piscina natacion'],
+        ['sun', 'sol verano'], ['snowflake', 'frio invierno'], ['couch', 'sofa muebles'],
+        ['bed', 'cama hotel alojamiento'], ['hotel', 'hotel alojamiento'], ['utensils', 'restaurante comida cubiertos'],
+        ['coffee', 'cafe bar cafeteria'], ['store', 'tienda comercio'], ['shopping-cart', 'compra supermercado carrito'],
+        ['briefcase', 'trabajo empresa maletin oficina'], ['user-tie', 'administrador gerente jefe'], ['users', 'vecinos grupo personas'],
+        ['user', 'persona usuario'], ['landmark', 'ayuntamiento administracion banco'], ['balance-scale', 'abogado justicia ley'],
+        ['gavel', 'juzgado ley juez'], ['file-alt', 'documentos papeles'], ['clipboard-list', 'lista tareas normas'],
+        ['calendar-alt', 'calendario fechas horarios'], ['clock', 'hora horario reloj'], ['book', 'libro normas estatutos'],
+        ['graduation-cap', 'educacion estudios'], ['school', 'colegio escuela'], ['church', 'iglesia parroquia'],
+        ['futbol', 'deporte futbol'], ['dumbbell', 'gimnasio deporte'], ['music', 'musica'],
+        ['tv', 'television antena'], ['laptop', 'ordenador informatica'], ['print', 'impresora'],
+        ['cut', 'peluqueria tijeras'], ['star', 'favoritos destacado estrella'], ['heart', 'corazon favorito'],
+        ['folder', 'carpeta general otros']
+    ];
+
+    function normTxt(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+
+    function renderIconGrid(selected, filter) {
+        const grid = byId('icon-grid');
+        if (!grid) return;
+        const q = normTxt(filter).trim();
+        const items = TAB_ICONS.filter(([n, k]) => !q || (n + ' ' + k).includes(q)).map(([n]) => 'fas fa-' + n);
+        // Si el icono actual no está en la lista (iconos antiguos escritos a mano), se mantiene como opción
+        if (selected && !TAB_ICONS.some(([n]) => 'fas fa-' + n === selected) && !q) items.unshift(selected);
+        grid.innerHTML = items.length ? items.map(cls =>
+            `<button type="button" class="icon-opt${cls === selected ? ' sel' : ''}" onclick="setTabIcon('${esc(cls)}')"><i class="${esc(cls)}"></i></button>`
+        ).join('') : '<div class="admin-note" style="grid-column:1/-1;text-align:center">Sin resultados</div>';
+    }
+
+    function setTabIcon(cls) {
+        cls = cls || 'fas fa-folder';
+        byId('tab-icon').value = cls;
+        byId('icon-preview').innerHTML = `<i class="${esc(cls)}"></i>`;
+        renderIconGrid(cls, byId('icon-search').value);
+    }
+
+    function filterIcons() { renderIconGrid(byId('tab-icon').value, byId('icon-search').value); }
 
     function openEditTabModal(id = '') {
         const modal = document.getElementById('modal-edit-tab');
@@ -1525,35 +2082,41 @@
             title.innerText = 'Editar Pestaña';
             inputId.value = id;
             inputLabel.value = cat.label;
-            inputIcon.value = cat.icon;
+            setTabIcon(cat.icon);
         } else {
             title.innerText = 'Nueva Pestaña';
             inputId.value = '';
             inputLabel.value = '';
-            inputIcon.value = 'fas fa-folder';
+            setTabIcon('fas fa-folder');
         }
         
+        byId('icon-search').value = '';
+        renderIconGrid(inputIcon.value, '');
         modal.style.display = 'flex';
+        const selBtn = byId('icon-grid').querySelector('.sel');
+        if (selBtn && selBtn.scrollIntoView) selBtn.scrollIntoView({ block: 'nearest' });
         history.pushState({modal: 'edit-tab'}, '');
     }
 
     function closeEditTabModal() {
         document.getElementById('modal-edit-tab').style.display = 'none';
         if (history.state && history.state.modal === 'edit-tab') {
-            history.back();
+            popModalHistory();
         }
     }
 
     function saveCategory() {
+        if (!adminSession) return alert('Acceso restringido a administración');
         const id = document.getElementById('edit-tab-id').value;
         const label = document.getElementById('tab-label').value.trim().toUpperCase();
         const icon = document.getElementById('tab-icon').value.trim() || 'fas fa-folder';
-        
+
         if (!label) return alert('El nombre es obligatorio');
-        
+
         if (id) {
             // Edit
             const index = userCategories.findIndex(c => c.id === id);
+            if (index < 0) return;
             userCategories[index].label = label;
             userCategories[index].icon = icon;
         } else {
@@ -1562,66 +2125,56 @@
             userCategories.push({ id: newId, label, icon });
             userContacts[newId] = [];
         }
-        
-        localStorage.setItem('user-categories', JSON.stringify(userCategories));
-        localStorage.setItem('user-contacts', JSON.stringify(userContacts));
-        
-        closeEditTabModal();
-        openTabManager();
-        document.body.classList.remove('edit-mode-active');
-        renderSidebarAndTabs();
-        // Inicializar ruedas a 0
-        document.querySelectorAll('.wheel-column').forEach(col => {
-            col.scrollTop = 0;
-            const firstItem = col.querySelector('.wheel-item');
-            if (firstItem) firstItem.classList.add('active');
-        });
 
+        persistData();
+        closeEditTabModal();
+        rerenderAll(true);
+        refreshAdminLists();
     }
 
     function deleteCategory(id) {
+        if (!adminSession) return;
+        const cat = userCategories.find(c => c.id === id);
+        if (!cat || cat.static) return;
         if (!confirm('¿Seguro que quieres borrar esta pestaña y todos sus contactos?')) return;
-        
+
         userCategories = userCategories.filter(c => c.id !== id);
         delete userContacts[id];
-        
-        localStorage.setItem('user-categories', JSON.stringify(userCategories));
-        localStorage.setItem('user-contacts', JSON.stringify(userContacts));
-        
-        openTabManager();
-        document.body.classList.remove('edit-mode-active');
-        renderSidebarAndTabs();
-        // Inicializar ruedas a 0
-        document.querySelectorAll('.wheel-column').forEach(col => {
-            col.scrollTop = 0;
-            const firstItem = col.querySelector('.wheel-item');
-            if (firstItem) firstItem.classList.add('active');
-        });
 
+        persistData();
+        rerenderAll(true);
+        refreshAdminLists();
     }
 
     // GESTIÓN DE CONTACTOS (MODAL)
-    function openAddModal() {
+    function fillCategorySelect(selected) {
+        const sel = document.getElementById('add-category');
+        sel.innerHTML = '';
+        userCategories.forEach(cat => {
+            if (!cat.static) {
+                const opt = document.createElement('option');
+                opt.value = cat.id;
+                opt.textContent = cat.label;
+                sel.appendChild(opt);
+            }
+        });
+        if (selected && Array.from(sel.options).some(o => o.value === selected)) sel.value = selected;
+    }
+
+    function openAddModal(presetCat) {
+        if (!adminSession) return;
         document.getElementById('modal-contact-title').innerText = 'Añadir Contacto';
         document.getElementById('edit-index').value = '';
+        document.getElementById('edit-orig-cat').value = '';
         document.getElementById('add-label').value = '';
         document.getElementById('add-sublabel').value = '';
         document.getElementById('add-address').value = '';
         document.getElementById('add-web').value = '';
         document.getElementById('add-mail').value = '';
-        
-        const currentTabId = document.querySelector('.tab-content.active').id;
-        const categorySelect = document.getElementById('add-category');
-        categorySelect.innerHTML = '';
-        userCategories.forEach(cat => {
-            if (!cat.static) {
-                const opt = document.createElement('option');
-                opt.value = cat.id;
-                opt.innerText = cat.label;
-                categorySelect.appendChild(opt);
-            }
-        });
-        categorySelect.value = currentTabId;
+        document.getElementById('add-emergency').checked = false;
+
+        const active = document.querySelector('.tab-content.active');
+        fillCategorySelect(typeof presetCat === 'string' && presetCat ? presetCat : (active ? active.id : ''));
 
         const container = document.getElementById('phones-container');
         container.innerHTML = '';
@@ -1638,8 +2191,8 @@
         row.style.marginTop = '10px';
         row.innerHTML = `
             <div style="flex:1">
-                <input type="text" class="form-input phone-label" placeholder="Etiqueta (Ej: Móvil)" value="${label}" style="margin-bottom:5px; height:35px; font-size:0.8rem">
-                <input type="tel" class="form-input phone-number" placeholder="Número" value="${phone}">
+                <input type="text" class="form-input phone-label" placeholder="Etiqueta (Ej: Móvil)" value="${esc(label)}" style="margin-bottom:5px; height:35px; font-size:0.8rem">
+                <input type="tel" class="form-input phone-number" placeholder="Número" value="${esc(phone)}">
             </div>
             <div style="width:50px; text-align:center">
                 <label style="font-size:0.6rem; display:block">WA</label>
@@ -1653,20 +2206,24 @@
     function closeAddModal() {
         document.getElementById('modal-add-contact').style.display = 'none';
         if (history.state && history.state.modal === 'contact') {
-            history.back();
+            popModalHistory();
         }
     }
 
     function editContact(categoryId, index) {
-        const c = userContacts[categoryId][index];
+        if (!adminSession) return;
+        const c = (userContacts[categoryId] || [])[index];
+        if (!c) return;
         document.getElementById('modal-contact-title').innerText = 'Editar Contacto';
         document.getElementById('edit-index').value = index;
-        document.getElementById('add-category').value = categoryId;
+        document.getElementById('edit-orig-cat').value = categoryId;
+        fillCategorySelect(categoryId);
         document.getElementById('add-label').value = c.label;
         document.getElementById('add-sublabel').value = c.sublabel || '';
         document.getElementById('add-address').value = c.address || '';
         document.getElementById('add-web').value = c.web || '';
         document.getElementById('add-mail').value = c.mail || '';
+        document.getElementById('add-emergency').checked = !!c.isEmergency;
 
         const container = document.getElementById('phones-container');
         container.innerHTML = '';
@@ -1681,18 +2238,22 @@
     }
 
     function saveContact() {
+        if (!adminSession) return alert('Acceso restringido a administración');
         const categoryId = document.getElementById('add-category').value;
         const label = document.getElementById('add-label').value.trim().toUpperCase();
         const sublabel = document.getElementById('add-sublabel').value.trim().toUpperCase();
         const address = document.getElementById('add-address').value.trim();
         const web = document.getElementById('add-web').value.trim();
         const mail = document.getElementById('add-mail').value.trim();
-        const editIndex = document.getElementById('edit-index').value;
+        const editRaw = document.getElementById('edit-index').value;
+        const origCat = document.getElementById('edit-orig-cat').value || categoryId;
+        const editIdx = editRaw === '' ? -1 : parseInt(editRaw, 10);
 
+        if (!categoryId) return alert('Elige una pestaña');
         if (!label) return alert('El nombre es obligatorio');
 
         const numbers = [];
-        document.querySelectorAll('.phone-row').forEach(row => {
+        document.querySelectorAll('#phones-container .phone-row').forEach(row => {
             const pLabel = row.querySelector('.phone-label').value.trim().toUpperCase();
             const pNum = row.querySelector('.phone-number').value.trim().replace(/\s/g, '');
             const pWa = row.querySelector('.phone-wa').checked;
@@ -1702,29 +2263,35 @@
         if (numbers.length === 0) return alert('Añade al menos un número de teléfono');
 
         const contactData = { label, sublabel, numbers, address, web, mail };
-        
-        // Conservar propiedad isEmergency si existía
-        if (editIndex !== '' && userContacts[categoryId][editIndex].isEmergency) {
-            contactData.isEmergency = true;
-        }
+        if (document.getElementById('add-emergency').checked) contactData.isEmergency = true;
 
-        if (editIndex !== '') {
-            userContacts[categoryId][editIndex] = contactData;
+        if (!userContacts[categoryId]) userContacts[categoryId] = [];
+        if (editIdx >= 0) {
+            if (origCat === categoryId) {
+                userContacts[categoryId][editIdx] = contactData;
+            } else {
+                // Cambio de pestaña: sale de la antigua y entra al final de la nueva
+                userContacts[origCat].splice(editIdx, 1);
+                userContacts[categoryId].push(contactData);
+            }
         } else {
-            if (!userContacts[categoryId]) userContacts[categoryId] = [];
             userContacts[categoryId].push(contactData);
         }
 
-        localStorage.setItem('user-contacts', JSON.stringify(userContacts));
+        persistData();
         closeAddModal();
         renderCategoryContacts(categoryId);
+        if (origCat !== categoryId) renderCategoryContacts(origCat);
+        refreshAdminLists();
     }
 
     function deleteContact(categoryId, index) {
+        if (!adminSession) return;
         if (!confirm('¿Borrar este contacto?')) return;
         userContacts[categoryId].splice(index, 1);
-        localStorage.setItem('user-contacts', JSON.stringify(userContacts));
+        persistData();
         renderCategoryContacts(categoryId);
+        refreshAdminLists();
     }
 
     // TEMAS
@@ -1963,7 +2530,7 @@
     function closeModal() {
         document.getElementById('modal-porterillo').style.display = 'none';
         if (history.state && history.state.modal === 'porterillo-res') {
-            history.back();
+            popModalHistory();
         }
     }
 
@@ -1980,6 +2547,8 @@
         });
 
         setTheme(localStorage.getItem('user-theme') || 'light');
+        setSyncStatus();
+        syncFromCloud();
     };
 
     // HISTORIAL Y BOTÓN ATRÁS
@@ -1987,6 +2556,7 @@
     let isExiting = false;
 
     window.onpopstate = function(event) {
+        if (ignorePop) { ignorePop = false; return; } // cierre programático de un modal
         if (isExiting) return; // Si estamos saliendo, no interferir
 
         const openModals = Array.from(document.querySelectorAll('.modal-overlay')).filter(m => m.style.display === 'flex');
@@ -1994,8 +2564,14 @@
         const sidebarOpen = sidebar ? sidebar.classList.contains('open') : false;
 
         if (openModals.length > 0) {
-            // Si hay modales, cerrarlos
-            openModals.forEach(m => m.style.display = 'none');
+            // Cerrar solo el modal que está más arriba
+            const top = openModals.reduce((best, m) => {
+                const zb = parseInt(getComputedStyle(best).zIndex, 10) || 0;
+                const zm = parseInt(getComputedStyle(m).zIndex, 10) || 0;
+                return zm >= zb ? m : best;
+            });
+            top.style.display = 'none';
+            if (top.id === 'modal-admin' && !document.body.classList.contains('edit-mode-active')) adminSession = false;
         } else if (sidebarOpen) {
             // Si el menú está abierto, cerrarlo
             sidebar.classList.remove('open');
@@ -2056,14 +2632,6 @@
         }
     }
 
-    function toggleBackupOptions() {
-        const options = document.getElementById('backup-options');
-        const isHidden = options.style.display === 'none';
-        options.style.display = isHidden ? 'block' : 'none';
-        const btn = event.currentTarget;
-        btn.innerHTML = isHidden ? '<i class="fas fa-hdd"></i> Ocultar Opciones de Respaldo' : '<i class="fas fa-hdd"></i> Mostrar Opciones de Respaldo';
-    }
-
     // INICIO
     function exportData() {
         const data = {
@@ -2097,6 +2665,7 @@
                         localStorage.setItem('user-contacts', JSON.stringify(data.contacts));
                         localStorage.setItem('user-categories', JSON.stringify(data.categories));
                         if (data.theme) localStorage.setItem('user-theme', data.theme);
+                        localStorage.setItem('cloud-dirty', 'true');
                         alert('Datos importados con éxito. La aplicación se reiniciará.');
                         location.reload();
                     }
