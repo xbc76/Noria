@@ -1,0 +1,522 @@
+{
+ "app": "directorio-la-noria",
+ "formato": 1,
+ "actualizado": "2026-11-10T04:41:39.760Z",
+ "categories": [
+  {
+   "id": "noria",
+   "label": "LA NORIA",
+   "icon": "fas fa-building"
+  },
+  {
+   "id": "servicios",
+   "label": "SERVICIOS",
+   "icon": "fas fa-tools"
+  },
+  {
+   "id": "emergencias",
+   "label": "EMERGENCIAS",
+   "icon": "fas fa-ambulance"
+  },
+  {
+   "id": "transportes",
+   "label": "TRANSPORTES",
+   "icon": "fas fa-bus"
+  },
+  {
+   "id": "kosmos",
+   "label": "KOSMOS SEGURIDAD",
+   "icon": "fas fa-user-shield"
+  },
+  {
+   "id": "mutua",
+   "label": "MUTUA MAZ",
+   "icon": "fas fa-shield-alt"
+  },
+  {
+   "id": "viviendas",
+   "label": "VIVIENDAS",
+   "icon": "fas fa-home",
+   "static": true
+  },
+  {
+   "id": "porterillo",
+   "label": "PORTERILLO",
+   "icon": "fas fa-door-open",
+   "static": true
+  }
+ ],
+ "contacts": {
+  "noria": [
+   {
+    "label": "MANTENIMIENTO",
+    "sublabel": "LA NORIA IV",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "636232550",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "VIGILANTE",
+    "sublabel": "LA NORIA IV",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "621507465",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "AUXILIAR",
+    "sublabel": "LA NORIA IV",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "691342040",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "AUXILIAR",
+    "sublabel": "LA NORIA III",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "608006686",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "JEFE AUXILIARES",
+    "sublabel": "Capacita2",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "662284151",
+      "wa": true
+     }
+    ]
+   }
+  ],
+  "mutua": [
+   {
+    "label": "MUTUA MAZ",
+    "sublabel": "URGENCIAS",
+    "isEmergency": true,
+    "numbers": [
+     {
+      "label": "Gratuito",
+      "phone": "900121300",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "CENTRO MÁLAGA",
+    "sublabel": "CENTRO MAZ MÁLAGA",
+    "address": "Calle Hilera, 15, 29007 Málaga",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "952611643",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "CENTRO MARBELLA",
+    "sublabel": "CENTRO MAZ MARBELLA",
+    "address": "Avda. Gral. López Domínguez, Conj. Las Terrazas, Bl. 3, Lc. 4, 29603 Marbella",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "952898402",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "CENTRO ESTEPONA",
+    "sublabel": "CENTRO MÉDICO ESTEPONA",
+    "address": "Avda. Juan Carlos I, Bl. 5, 29680 Estepona",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "952802208",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "CENTRO LOS BARRIOS",
+    "sublabel": "HOSPITAL QUIRÓNSALUD",
+    "address": "Avda. de los Empresarios, s/n, Palmones, 11379 Los Barrios",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "956798300",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "CENTRO ALGECIRAS",
+    "sublabel": "HOSPITAL PUNTA EUROPA",
+    "address": "Ctra. Getares, s/n, 11207 Algeciras",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "956025000",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "MÁS INFORMACIÓN",
+    "sublabel": "",
+    "web": "www.maz.es",
+    "numbers": [
+     {
+      "label": "Consultas",
+      "phone": "976301360",
+      "wa": false
+     }
+    ]
+   }
+  ],
+  "servicios": [
+   {
+    "label": "ADMINISTRACIÓN",
+    "sublabel": "HORIZONTAL",
+    "address": "Avd de España 17, Edif. Villa Matilde, Bloque 1, 1ºD, 29692 Sabinillas (Málaga)",
+    "web": "adhorizontal.com",
+    "mail": "info@adhorizontal.com",
+    "numbers": [
+     {
+      "label": "FIJO",
+      "phone": "951607021",
+      "wa": false
+     },
+     {
+      "label": "MÓVIL",
+      "phone": "680939639",
+      "wa": true
+     },
+     {
+      "label": "24H",
+      "phone": "626721464",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "CERRAJEROS",
+    "numbers": [
+     {
+      "label": "CERRAJERO 1",
+      "phone": "674729769",
+      "wa": true
+     },
+     {
+      "label": "CERRAJERO 2",
+      "phone": "630333625",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "ASCENSORES",
+    "sublabel": "ORONA",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "900210813",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "PUERTA GARAGE",
+    "sublabel": "POWERMATIC",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "952782645",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "SEVILLANA ELECTRICIDAD",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "952794845",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "AGUAS MUNICIPALES",
+    "sublabel": "SERVICIO MUNICIPAL",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "616902400",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "CENTRO SALUD",
+    "sublabel": "SABINILLAS",
+    "address": "Calle Pescadores, s/n, 29692 Sabinillas, Málaga",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "951270648",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "CENTRO SALUD",
+    "sublabel": "MANILVA",
+    "address": "Calle del Cuartel, s/n, 29691 Manilva, Málaga",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "951892451",
+      "wa": false
+     }
+    ]
+   }
+  ],
+  "emergencias": [
+   {
+    "label": "EMERGENCIAS",
+    "sublabel": "112",
+    "isEmergency": true,
+    "numbers": [
+     {
+      "label": "",
+      "phone": "112",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "POLICÍA LOCAL",
+    "sublabel": "MANILVA",
+    "address": "C/ Dr. Álvarez Leiva, 8, Manilva",
+    "numbers": [
+     {
+      "label": "092",
+      "phone": "092",
+      "wa": false
+     },
+     {
+      "label": "Central",
+      "phone": "952890945",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "GUARDIA CIVIL",
+    "sublabel": "MANILVA",
+    "address": "N-340, Km. 144.5, Manilva",
+    "numbers": [
+     {
+      "label": "062",
+      "phone": "062",
+      "wa": false
+     },
+     {
+      "label": "Puesto",
+      "phone": "952894179",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "POLICÍA NACIONAL",
+    "sublabel": "ESTEPONA",
+    "address": "C/ Valle Inclán, 1, Estepona",
+    "numbers": [
+     {
+      "label": "091",
+      "phone": "091",
+      "wa": false
+     },
+     {
+      "label": "Comisaría",
+      "phone": "952798300",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "PROTECCIÓN CIVIL",
+    "sublabel": "MANILVA",
+    "address": "C/ Cuartel, s/n, 29691 Manilva, Málaga",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "607505088",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "BOMBEROS",
+    "sublabel": "ESTEPONA",
+    "address": "C/ Monterroso, s/n, Estepona",
+    "numbers": [
+     {
+      "label": "080",
+      "phone": "080",
+      "wa": false
+     },
+     {
+      "label": "Parque",
+      "phone": "952792121",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "HOSPITAL COSTA DEL SOL",
+    "sublabel": "MARBELLA",
+    "address": "Autovía A-7, Km 187, Marbella",
+    "web": "https://www.hcs.es/",
+    "numbers": [
+     {
+      "label": "Citas",
+      "phone": "951976669",
+      "wa": false
+     },
+     {
+      "label": "Urgencias",
+      "phone": "951976670",
+      "wa": false
+     }
+    ]
+   }
+  ],
+  "transportes": [
+   {
+    "label": "TAXI",
+    "numbers": [
+     {
+      "label": "Sabinillas",
+      "phone": "952802900",
+      "wa": false
+     },
+     {
+      "label": "Manilva",
+      "phone": "952802904",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "AUTOBUSES",
+    "sublabel": "ESTEPONA",
+    "address": "Avda. del Litoral, s/n, 29680 Estepona, Málaga",
+    "numbers": [
+     {
+      "label": "Estación",
+      "phone": "952800249",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "RENFE",
+    "sublabel": "MÁLAGA",
+    "address": "Explanada de la Estación, s/n, Málaga",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "952360202",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "AEROPUERTO",
+    "sublabel": "MÁLAGA",
+    "address": "Av. Cmdte. García Morato, Málaga",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "952400000",
+      "wa": false
+     }
+    ]
+   },
+   {
+    "label": "AEROPUERTO",
+    "sublabel": "GIBRALTAR",
+    "address": "British Lines Road, Gibraltar",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "956775984",
+      "wa": false
+     }
+    ]
+   }
+  ],
+  "kosmos": [
+   {
+    "label": "CARLOS MOLINA",
+    "sublabel": "DIRECTOR DE SEGURIDAD",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "679897155",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "ANTONIO",
+    "sublabel": "JEFE DE SERVICIO",
+    "isEmergency": true,
+    "numbers": [
+     {
+      "label": "24H",
+      "phone": "633680169",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "JUAN",
+    "numbers": [
+     {
+      "label": "",
+      "phone": "669396440",
+      "wa": true
+     }
+    ]
+   },
+   {
+    "label": "OFICINA",
+    "sublabel": "TORREMOLINOS",
+    "address": "C/ Pablo Iglesias 1, Local 1, 29620 Torremolinos (Málaga)",
+    "mail": "info@seguridadkosmos.es",
+    "web": "https://www.seguridadkosmos.es/",
+    "numbers": []
+   }
+  ]
+ }
+}
